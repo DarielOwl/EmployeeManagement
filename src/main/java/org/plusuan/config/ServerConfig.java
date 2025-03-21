@@ -6,6 +6,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.plusuan.web.EmployeeServlet;
 import org.plusuan.web.EmployeeByIdServlet;
+import org.plusuan.web.TopSalaryServlet;
 
 public class ServerConfig {
 
@@ -29,6 +30,7 @@ public class ServerConfig {
         //Cada servlet se mapea a un path distinto para tener servicios independientes.
         context.addServlet(new ServletHolder(new EmployeeServlet()), "/employees");
         context.addServlet(new ServletHolder(new EmployeeByIdServlet()), "/employees/*");
+        context.addServlet(new ServletHolder(new TopSalaryServlet()), "/employees/salary/top");
 
         return server;
     }
