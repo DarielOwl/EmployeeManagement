@@ -15,30 +15,6 @@ public class EmployeeDao {
     public static final String DB_USERNAME = "root";
     public static final String DB_PASSWORD = "Passw0rd";
 
-    public int registerEmployee(Employee employee) throws ClassNotFoundException {
-        String INSERT_USERS_SQL = "INSERT INTO employees (id, name, position, salary, hire_date, department) VALUES (?, ?, ?, ?, ?, ?);";
-        int result = 0;
-
-        Class.forName("com.mysql.cj.jdbc.Driver");
-
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/example?useSSL=false", "root", "Passw0rd");
-             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USERS_SQL)) {
-            preparedStatement.setInt(1, employee.getId());
-            preparedStatement.setString(2, employee.getName());
-            preparedStatement.setString(3, employee.getPosition());
-            preparedStatement.setDouble(4, employee.getSalary());
-            preparedStatement.setDate(5, Date.valueOf(employee.getHireDate()));
-            preparedStatement.setString(6, employee.getDepartment());
-
-            System.out.println(preparedStatement);
-            result = preparedStatement.executeUpdate();
-
-        } catch (SQLException e) {
-            printSQLException(e);
-        }
-        return result;
-    }
-
     public List<Employee> getAllEmployees() throws ClassNotFoundException { //Method Complete
         List<Employee> employees = new ArrayList<>();
         Class.forName(MYSQL_DRIVER);
@@ -63,6 +39,28 @@ public class EmployeeDao {
             printSQLException(e);
         }
         return employees;
+    }
+
+    public int createEmployee(Employee employee) throws ClassNotFoundException {
+        int result = 0;
+        Class.forName(MYSQL_DRIVER);
+
+        String callProcedure = "{ call insert_employee(?, ?, ?, ?, ?, ?) }";
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+             CallableStatement callableStatement = connection.prepareCall(callProcedure))
+        {
+            callableStatement.setInt(1, employee.getId());
+            callableStatement.setString(2, employee.getName());
+            callableStatement.setString(3, employee.getPosition());
+            callableStatement.setDouble(4, employee.getSalary());
+            callableStatement.setDate(5, java.sql.Date.valueOf(employee.getHireDate()));
+            callableStatement.setString(6, employee.getDepartment());
+
+            result = callableStatement.executeUpdate();
+        } catch (SQLException e) {
+            printSQLException(e);
+        }
+        return result;
     }
 
     private void printSQLException(SQLException ex) {
