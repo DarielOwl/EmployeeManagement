@@ -25,8 +25,7 @@ public class TopSalaryServlet extends HttpServlet {
 
     private final EmployeeAsyncService employeeAsyncService = new EmployeeAsyncService();
 
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule());
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

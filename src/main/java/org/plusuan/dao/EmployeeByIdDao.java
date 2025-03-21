@@ -36,7 +36,7 @@ public class EmployeeByIdDao {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            printSQLException(e);
         }
         return Optional.ofNullable(employee);
     }
@@ -58,7 +58,7 @@ public class EmployeeByIdDao {
 
             result = callableStatement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            printSQLException(e);
         }
         return result;
     }
@@ -74,7 +74,7 @@ public class EmployeeByIdDao {
             callableStatement.setInt(1, id);
             result = callableStatement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            printSQLException(e);
         }
         return result;
     }

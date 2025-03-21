@@ -16,7 +16,6 @@ public class AsyncConfig {
         TimeUnit timeUnit = TimeUnit.SECONDS;
         int queueCapacity = 100;
 
-        // Creamos un ThreadFactory personalizado para nombrar los hilos
         ThreadFactory threadFactory = new ThreadFactory() {
             private final AtomicInteger count = new AtomicInteger(0);
             private final String prefix = "asyncExecutor-";
@@ -29,7 +28,6 @@ public class AsyncConfig {
             }
         };
 
-        // Creamos un ThreadPoolExecutor con la configuración deseada
         this.executor = new ThreadPoolExecutor(
                 corePoolSize,
                 maxPoolSize,

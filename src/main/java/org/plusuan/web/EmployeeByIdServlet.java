@@ -15,10 +15,13 @@ import org.plusuan.model.Employee;
 import java.io.IOException;
 import java.util.Optional;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @WebServlet("/employee/*")
 public class EmployeeByIdServlet extends HttpServlet {
+    public static final String EMPLOYEE_ID_IS_MISSING = "Employee ID is missing";
+    public static final String EMPLOYEE_NOT_FOUND = "Employee not found";
     private final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
@@ -30,20 +33,13 @@ public class EmployeeByIdServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String pathInfo = req.getPathInfo();
 
-        if (pathInfo == null || pathInfo.equals("/")) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Employee ID is missing");
+        if (isNull(pathInfo) || pathInfo.equals("/")) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, EMPLOYEE_ID_IS_MISSING);
             return;
         }
 
-        String idString = pathInfo.substring(1); // Sacar la barra inicial
-        int id;
-
-        try {
-            id = Integer.parseInt(idString);
-        } catch (NumberFormatException e) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid employee ID");
-            return;
-        }
+        Integer id = verifyEmployeeId(resp, pathInfo);
+        if (id == null) return;
 
         Employee employee = employeeDao.getEmployeeById(id).orElse(null); //Obtener empleado
         if (nonNull(employee)) {
@@ -51,7 +47,7 @@ public class EmployeeByIdServlet extends HttpServlet {
             resp.setStatus(HttpServletResponse.SC_OK);
             objectMapper.writeValue(resp.getWriter(), employee);
         } else {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Employee not found");
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND, EMPLOYEE_NOT_FOUND);
         }
     }
 
@@ -61,19 +57,12 @@ public class EmployeeByIdServlet extends HttpServlet {
         String pathInfo = req.getPathInfo();
 
         if (pathInfo == null || pathInfo.equals("/")) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Employee ID is missing");
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, EMPLOYEE_ID_IS_MISSING);
             return;
         }
 
-        String idString = pathInfo.substring(1);
-        int id;
-
-        try {
-            id = Integer.parseInt(idString);
-        } catch (NumberFormatException e) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid employee ID");
-            return;
-        }
+        Integer id = verifyEmployeeId(resp, pathInfo);
+        if (id == null) return;
 
         Employee updatedEmployee = objectMapper.readValue(req.getInputStream(), Employee.class);
         updatedEmployee.setId(id);
@@ -95,18 +84,12 @@ public class EmployeeByIdServlet extends HttpServlet {
         String pathInfo = req.getPathInfo();
 
         if (pathInfo == null || pathInfo.equals("/")) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Employee ID is missing");
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, EMPLOYEE_ID_IS_MISSING);
             return;
         }
 
-        String idStr = pathInfo.substring(1);
-        int id;
-        try {
-            id = Integer.parseInt(idStr);
-        } catch (NumberFormatException e) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid employee ID");
-            return;
-        }
+        Integer id = verifyEmployeeId(resp, pathInfo);
+        if (id == null) return;
 
         int result = employeeDao.deleteEmployeeById(id);
         if (result > 0) {
@@ -117,4 +100,18 @@ public class EmployeeByIdServlet extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to delete employee");
         }
     }
+
+    private static Integer verifyEmployeeId(HttpServletResponse resp, String pathInfo) throws IOException {
+        String idString = pathInfo.substring(1); // Sacar la barra inicial
+        int id;
+
+        try {
+            id = Integer.parseInt(idString);
+        } catch (NumberFormatException e) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid employee ID");
+            return null;
+        }
+        return id;
+    }
+
 }

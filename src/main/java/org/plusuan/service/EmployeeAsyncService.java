@@ -13,11 +13,12 @@ import java.util.function.Supplier;
 
 import org.plusuan.model.Employee;
 
+import static java.util.Objects.isNull;
+
 public class EmployeeAsyncService {
 
     private final ExecutorService executorService;
 
-    // ObjectMapper para manejar la conversión a JSON (y LocalDate si es necesario)
     private final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
@@ -46,11 +47,11 @@ public class EmployeeAsyncService {
 
     private Supplier<List<Employee>> loadEmployees(String fileName) {
         return () -> {
-            try (InputStream is = getClass().getClassLoader().getResourceAsStream(fileName)) {
-                if (is == null) {
+            try (InputStream input = getClass().getClassLoader().getResourceAsStream(fileName)) {
+                if (isNull(input)) {
                     throw new IOException("No se encontró el archivo: " + fileName);
                 }
-                return objectMapper.readValue(is, new TypeReference<List<Employee>>() {});
+                return objectMapper.readValue(input, new TypeReference<List<Employee>>() {});
             } catch (IOException e) {
                 throw new RuntimeException("Error leyendo el archivo " + fileName, e);
             }
