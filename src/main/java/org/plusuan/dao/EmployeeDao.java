@@ -2,18 +2,18 @@ package org.plusuan.dao;
 
 import org.plusuan.model.Employee;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Date;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.ResultSet;
 import java.time.LocalDate;
 
 
 public class EmployeeDao {
+
+    public static final String MYSQL_DRIVER = "com.mysql.cj.jdbc.Driver";
+    public static final String DB_URL = "jdbc:mysql://localhost:3306/example?useSSL=false";
+    public static final String DB_USERNAME = "root";
+    public static final String DB_PASSWORD = "Passw0rd";
 
     public int registerEmployee(Employee employee) throws ClassNotFoundException {
         String INSERT_USERS_SQL = "INSERT INTO employees (id, name, position, salary, hire_date, department) VALUES (?, ?, ?, ?, ?, ?);";
@@ -39,23 +39,20 @@ public class EmployeeDao {
         return result;
     }
 
-    // NUEVO: Método para obtener todos los empleados desde la base de datos
-    public List<Employee> getAllEmployees() throws ClassNotFoundException {
+    public List<Employee> getAllEmployees() throws ClassNotFoundException { //Method Complete
         List<Employee> employees = new ArrayList<>();
-        String SELECT_ALL_EMPLOYEES_SQL = "SELECT id, name, position, salary, hire_date, department FROM employees;";
+        Class.forName(MYSQL_DRIVER);
+        String callProcedure = "{ call get_all_employees() }";
 
-        Class.forName("com.mysql.cj.jdbc.Driver");
-
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/example?allowPublicKeyRetrieval=true&useSSL=false", "root", "Passw0rd");
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_EMPLOYEES_SQL);
-             ResultSet rs = preparedStatement.executeQuery()) {
-
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+             CallableStatement callableStatement = connection.prepareCall(callProcedure);
+             ResultSet rs = callableStatement.executeQuery())
+        {
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String name = rs.getString("name");
                 String position = rs.getString("position");
                 double salary = rs.getDouble("salary");
-                // Convertimos la fecha SQL a LocalDate
                 LocalDate hireDate = rs.getDate("hire_date").toLocalDate();
                 String department = rs.getString("department");
 
