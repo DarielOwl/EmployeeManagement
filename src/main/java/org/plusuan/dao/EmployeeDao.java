@@ -7,15 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDate;
 
+import static org.plusuan.config.DatabaseConfig.*;
+
 
 public class EmployeeDao {
 
-    public static final String MYSQL_DRIVER = "com.mysql.cj.jdbc.Driver";
-    public static final String DB_URL = "jdbc:mysql://localhost:3306/example?useSSL=false";
-    public static final String DB_USERNAME = "root";
-    public static final String DB_PASSWORD = "Passw0rd";
-
-    public List<Employee> getAllEmployees() throws ClassNotFoundException { //Method Complete
+    public List<Employee> getAllEmployees() throws ClassNotFoundException {
         List<Employee> employees = new ArrayList<>();
         Class.forName(MYSQL_DRIVER);
         String callProcedure = "{ call get_all_employees() }";

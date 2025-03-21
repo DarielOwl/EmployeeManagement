@@ -5,6 +5,7 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.plusuan.web.EmployeeServlet;
+import org.plusuan.web.EmployeeByIdServlet;
 
 public class ServerConfig {
 
@@ -27,6 +28,7 @@ public class ServerConfig {
 
         //Cada servlet se mapea a un path distinto para tener servicios independientes.
         context.addServlet(new ServletHolder(new EmployeeServlet()), "/employees");
+        context.addServlet(new ServletHolder(new EmployeeByIdServlet()), "/employees/*");
 
         return server;
     }
