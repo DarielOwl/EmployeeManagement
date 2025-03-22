@@ -1,5 +1,6 @@
 package org.plusuan.dao;
 
+import org.plusuan.config.DatabaseConfig;
 import org.plusuan.model.Employee;
 
 import java.sql.*;
@@ -17,7 +18,7 @@ public class EmployeeDao {
         Class.forName(MYSQL_DRIVER);
         String callProcedure = "{ call get_all_employees() }";
 
-        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+        try (Connection connection = DatabaseConfig.getConnection();
              CallableStatement callableStatement = connection.prepareCall(callProcedure);
              ResultSet rs = callableStatement.executeQuery())
         {
