@@ -1,0 +1,15 @@
+meta {
+  name: getByIdEmployeed
+  type: http
+  seq: 4
+}
+
+get {
+  url: http://localhost:8080/employees/:id
+  body: none
+  auth: none
+}
+
+params:path {
+  id: 51
+}

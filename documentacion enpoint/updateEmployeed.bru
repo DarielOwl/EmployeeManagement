@@ -1,0 +1,26 @@
+meta {
+  name: updateEmployeed
+  type: http
+  seq: 5
+}
+
+put {
+  url: http://localhost:8080/employees/:id
+  body: json
+  auth: none
+}
+
+params:path {
+  id: 51
+}
+
+body:json {
+  {
+      "id": 51,
+      "name": "Dariel de Sosa",
+      "position": "Dev",
+      "salary": 123.456,
+      "hire_date": "2025-03-25",
+      "department": "Develoment"
+  }
+}

@@ -1,0 +1,17 @@
+meta {
+  name: TopSalary
+  type: http
+  seq: 7
+}
+
+get {
+  url: http://localhost:8080/employees/salary/top
+  body: none
+  auth: none
+}
+
+body:multipart-form {
+  : @file(C:\Users\Dariel\Desktop\Plusuan S.A\employees_data1.json)
+  : @file(C:\Users\Dariel\Desktop\Plusuan S.A\employees_data2.json)
+  : @file(C:\Users\Dariel\Desktop\Plusuan S.A\employees_data3.json)
+}

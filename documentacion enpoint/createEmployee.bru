@@ -1,0 +1,22 @@
+meta {
+  name: createEmployee
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8080/employees
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "id": 51,
+      "name": "Dariel de Sosa",
+      "position": "Dev",
+      "salary": 80000.00,
+      "hire_date": "2025-03-25",
+      "department": "Develoment"
+  }
+}
