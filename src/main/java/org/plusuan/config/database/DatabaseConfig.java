@@ -6,7 +6,10 @@ import java.sql.DriverManager;
 
 public class DatabaseConfig {
 
+    public DatabaseConfig() {}
+
     public static Connection getConnection() throws Exception {
+
         DBSecret secret = SecretsManagerUtil.getDBSecret();
 
         String url = String.format("jdbc:mysql://%s:%d/%s?useSSL=false",

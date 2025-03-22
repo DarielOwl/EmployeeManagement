@@ -15,7 +15,7 @@ import static org.plusuan.config.database.DatabaseConfig.*;
 public class EmployeeByIdDao {
 
     @SneakyThrows
-    public Optional<Employee> getEmployeeById(int id) throws ClassNotFoundException {
+    public Optional<Employee> getEmployeeById(int id) throws ClassNotFoundException, Exception {
         Employee employee = null;
         String callProcedure = "{ call get_employee_by_id(?) }";
 
@@ -42,7 +42,7 @@ public class EmployeeByIdDao {
     }
 
     @SneakyThrows
-    public int updateEmployeeById(Employee employee) throws ClassNotFoundException {
+    public int updateEmployeeById(Employee employee) throws ClassNotFoundException, Exception {
         int result = 0;
         Class.forName("com.mysql.cj.jdbc.Driver");
         String callProcedure = "{ call update_employee_by_id(?, ?, ?, ?, ?, ?) }";
@@ -64,7 +64,7 @@ public class EmployeeByIdDao {
     }
 
     @SneakyThrows
-    public int deleteEmployeeById(int id) throws ClassNotFoundException {
+    public int deleteEmployeeById(int id) throws ClassNotFoundException, Exception {
         int result = 0;
         Class.forName("com.mysql.cj.jdbc.Driver");
         String callProcedure = "{ call delete_employee_by_id(?) }";

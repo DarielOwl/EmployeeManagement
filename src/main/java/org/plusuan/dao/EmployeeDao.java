@@ -15,7 +15,7 @@ import static org.plusuan.config.database.DatabaseConfig.*;
 public class EmployeeDao {
 
     @SneakyThrows
-    public List<Employee> getAllEmployees() throws ClassNotFoundException {
+    public List<Employee> getAllEmployees() throws ClassNotFoundException, Exception {
         List<Employee> employees = new ArrayList<>();
         String callProcedure = "{ call get_all_employees() }";
 
@@ -41,7 +41,7 @@ public class EmployeeDao {
     }
 
     @SneakyThrows
-    public int createEmployee(Employee employee) throws ClassNotFoundException {
+    public int createEmployee(Employee employee) throws ClassNotFoundException, Exception {
         int result = 0;
 
         String callProcedure = "{ call insert_employee(?, ?, ?, ?, ?, ?) }";

@@ -41,14 +41,19 @@ public class EmployeeByIdServlet extends HttpServlet {
         Integer id = verifyEmployeeId(resp, pathInfo);
         if (id == null) return;
 
-        Employee employee = employeeDao.getEmployeeById(id).orElse(null); //Obtener empleado
-        if (nonNull(employee)) {
-            resp.setContentType("application/json");
-            resp.setStatus(HttpServletResponse.SC_OK);
-            objectMapper.writeValue(resp.getWriter(), employee);
-        } else {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND, EMPLOYEE_NOT_FOUND);
+        try {
+            Employee employee = employeeDao.getEmployeeById(id).orElse(null); //Obtener empleado
+            if (nonNull(employee)) {
+                resp.setContentType("application/json");
+                resp.setStatus(HttpServletResponse.SC_OK);
+                objectMapper.writeValue(resp.getWriter(), employee);
+            } else {
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND, EMPLOYEE_NOT_FOUND);
+            }
+        } catch (Exception e) {
+            throw new ServletException("Error inicializando el servlet", e);
         }
+
     }
 
     @SneakyThrows
@@ -66,15 +71,20 @@ public class EmployeeByIdServlet extends HttpServlet {
 
         Employee updatedEmployee = objectMapper.readValue(req.getInputStream(), Employee.class);
         updatedEmployee.setId(id);
-        int result = employeeDao.updateEmployeeById(updatedEmployee);
 
-        if (result > 0) {
-            resp.setContentType("application/json");
-            resp.setStatus(HttpServletResponse.SC_OK);
-            resp.getWriter().write("{\"message\": \"Employee updated successfully!\"}");
-        }
-        else {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to update employee!");
+        try {
+            int result = employeeDao.updateEmployeeById(updatedEmployee);
+
+            if (result > 0) {
+                resp.setContentType("application/json");
+                resp.setStatus(HttpServletResponse.SC_OK);
+                resp.getWriter().write("{\"message\": \"Employee updated successfully!\"}");
+            }
+            else {
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to update employee!");
+            }
+        } catch (Exception e) {
+            throw new ServletException("Error inicializando el servlet", e);
         }
     }
 
@@ -91,13 +101,17 @@ public class EmployeeByIdServlet extends HttpServlet {
         Integer id = verifyEmployeeId(resp, pathInfo);
         if (id == null) return;
 
-        int result = employeeDao.deleteEmployeeById(id);
-        if (result > 0) {
-            resp.setContentType("application/json");
-            resp.setStatus(HttpServletResponse.SC_OK);
-            resp.getWriter().write("{\"message\": \"Employee deleted successfully\"}");
-        } else {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to delete employee");
+        try {
+            int result = employeeDao.deleteEmployeeById(id);
+            if (result > 0) {
+                resp.setContentType("application/json");
+                resp.setStatus(HttpServletResponse.SC_OK);
+                resp.getWriter().write("{\"message\": \"Employee deleted successfully\"}");
+            } else {
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to delete employee");
+            }
+        } catch (Exception e) {
+            throw new ServletException("Error inicializando el servlet", e);
         }
     }
 
