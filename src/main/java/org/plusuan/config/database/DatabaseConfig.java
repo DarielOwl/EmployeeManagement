@@ -1,4 +1,4 @@
-package org.plusuan.config;
+package org.plusuan.config.database;
 
 import java.sql.SQLException;
 import java.sql.Connection;
@@ -6,17 +6,15 @@ import java.sql.DriverManager;
 
 public class DatabaseConfig {
 
-    public static final String MYSQL_DRIVER = "com.mysql.cj.jdbc.Driver";
-    public static final String DB_URL = "jdbc:mysql://employee-db.clwwkuq6wy3u.sa-east-1.rds.amazonaws.com:3306/management?useSSL=false";
-    public static final String DB_USERNAME = "admin";
-    public static final String DB_PASSWORD = "Pa$$w0rd2025Employ&&";
+    public static Connection getConnection() throws Exception {
+        DBSecret secret = SecretsManagerUtil.getDBSecret();
 
-    public static Connection getConnection() throws ClassNotFoundException, SQLException {
-        // Registrar el driver de MySQL (necesario en algunas versiones de Java)
+        String url = String.format("jdbc:mysql://%s:%d/%s?useSSL=false",
+                secret.getHost(), secret.getPort(), secret.getDatabase());
+
         Class.forName("com.mysql.cj.jdbc.Driver");
 
-        // Retornar la conexión
-        return DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+        return DriverManager.getConnection(url, secret.getUsername(), secret.getPassword());
     }
 
     public static void printSQLException(SQLException ex) {

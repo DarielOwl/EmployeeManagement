@@ -1,25 +1,25 @@
 package org.plusuan.dao;
 
-import org.plusuan.config.DatabaseConfig;
+import lombok.SneakyThrows;
+import org.plusuan.config.database.DatabaseConfig;
 import org.plusuan.model.Employee;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Optional;
-import static org.plusuan.config.DatabaseConfig.*;
+import static org.plusuan.config.database.DatabaseConfig.*;
 
 public class EmployeeByIdDao {
 
+    @SneakyThrows
     public Optional<Employee> getEmployeeById(int id) throws ClassNotFoundException {
         Employee employee = null;
-        Class.forName(MYSQL_DRIVER);
         String callProcedure = "{ call get_employee_by_id(?) }";
 
-        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+        try (Connection connection = DatabaseConfig.getConnection();
              CallableStatement callableStatement = connection.prepareCall(callProcedure))
         {
             callableStatement.setInt(1, id);
@@ -41,12 +41,12 @@ public class EmployeeByIdDao {
         return Optional.ofNullable(employee);
     }
 
+    @SneakyThrows
     public int updateEmployeeById(Employee employee) throws ClassNotFoundException {
         int result = 0;
         Class.forName("com.mysql.cj.jdbc.Driver");
         String callProcedure = "{ call update_employee_by_id(?, ?, ?, ?, ?, ?) }";
-        try (Connection connection = DriverManager.getConnection(
-                DatabaseConfig.DB_URL, DatabaseConfig.DB_USERNAME, DatabaseConfig.DB_PASSWORD);
+        try (Connection connection = DatabaseConfig.getConnection();
              CallableStatement callableStatement = connection.prepareCall(callProcedure)) {
 
             callableStatement.setInt(1, employee.getId());
@@ -63,12 +63,12 @@ public class EmployeeByIdDao {
         return result;
     }
 
+    @SneakyThrows
     public int deleteEmployeeById(int id) throws ClassNotFoundException {
         int result = 0;
         Class.forName("com.mysql.cj.jdbc.Driver");
         String callProcedure = "{ call delete_employee_by_id(?) }";
-        try (Connection connection = DriverManager.getConnection(
-                DatabaseConfig.DB_URL, DatabaseConfig.DB_USERNAME, DatabaseConfig.DB_PASSWORD);
+        try (Connection connection = DatabaseConfig.getConnection();
              CallableStatement callableStatement = connection.prepareCall(callProcedure)) {
 
             callableStatement.setInt(1, id);
